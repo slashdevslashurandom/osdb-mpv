@@ -39,9 +39,9 @@ Automatically load subtitles when a file is loaded. Default is 'no'.
 
 Number of matching subtitles to query from OpenSubtitles. Default is 10. Maximum allowed is 500.
 
-    language='eng'
+    languages={'eng'}
 
-Subtitle languages to search for. Default is 'eng'. Can be multiple values, comma-separated.
+An array of subtitle language options to search for. Default is 'eng'. Each value in the array can be a language name or can be multiple language names, comma-separated. If you specify multiple values (for example, `{'eng','rus'}`), then you can use the "change language" hotkey (Ctrl+L by default) to choose which language to search for. If you specify multiple language names in one value (for example, `{'eng,rus'}`), then the search will include them both.
 
     autoFlagSubtitles=[yes|no]
 
@@ -68,3 +68,4 @@ To cycle through different subtitles found on OSDb, press **Ctrl+F** again.
 
 To flag a subtitle, if it has invalid timings and/or designed for another release of the same movie, press **Ctrl+R**.
 
+To swap between different languages, use **Ctrl+L**. After that, searching with **Ctrl+F** will return the first subtitle matching that language.

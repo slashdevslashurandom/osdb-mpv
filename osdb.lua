@@ -18,7 +18,9 @@ local options = {
     tempFolder = '/tmp',
     autoLoadSubtitles = false,
     numSubtitles = 10,
-    language = 'eng',
+    current_language = 1,
+    last_language = 1,
+    languages = {'eng'},
     autoFlagSubtitles = false,
     useHashSearch = true,
     useFilenameSearch = true,
@@ -196,7 +198,7 @@ function fetch_list()
                 {
                     moviehash = mhash,
                     moviebytesize = fsize,
-                    sublanguageid = options.language
+                    sublanguageid = options.languages[options.current_language]
                 })
             else
                 msg.warn("Movie hash couldn't be computed")
@@ -207,11 +209,13 @@ function fetch_list()
             table.insert(searchQuery,
             {
                 query = basename,
-                sublanguageid = options.language
+                sublanguageid = options.languages[options.current_language]
             })
         end
         osdb.login(options.user, options.password)
         subtitles:set(osdb.query(searchQuery, options.numSubtitles))
+
+	options.last_language = options.current_language
 
         if subtitles.count == 0 then
             mp.osd_message("No subtitles found", options.osdDelayShort)
@@ -219,8 +223,17 @@ function fetch_list()
         osdb.logout()
 end
 
+function rotate_languages()
+    options.current_language = options.current_language + 1
+    if (options.current_language > #options.languages) then
+        options.current_language = 1
+    end
+
+    mp.osd_message ("Set subtitle language to '"  ..  options.languages[options.current_language]  ..  "'", options.osdDelayShort)
+end
+
 function rotate_subtitles()
-    if subtitles.count == 0 then
+    if subtitles.count == 0 or options.last_language ~= options.current_language then
         -- Refresh the subtitle list
         fetch_list()
     end
@@ -281,6 +294,7 @@ end
 
 mp.add_key_binding('Ctrl+r', 'osdb_report', function() catch(flag_subtitle) end)
 mp.add_key_binding('Ctrl+f', 'osdb_find_subtitles', function() catch(rotate_subtitles) end)
+mp.add_key_binding('Ctrl+l', 'osdb_switch_language', function() catch(rotate_languages) end)
 mp.register_event('file-loaded', function (event)
                                      -- Reset the cache
                                      subtitles:set({})
