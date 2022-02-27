@@ -31,6 +31,7 @@ local options = {
 }
 read_options(options, 'osdb')
 
+if not table.unpack then table.unpack = unpack end
 
 -- This is for performing RPC calls to OpenSubtitles
 local osdb = {}
